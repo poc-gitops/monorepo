@@ -5,6 +5,10 @@ locals {
 resource "kubernetes_manifest" "this" {
   for_each = local.repos
 
+  field_manager {
+    force_conflicts = true
+  }
+
   manifest = {
     apiVersion = "source.toolkit.fluxcd.io/v1beta1"
     kind       = "GitRepository"
@@ -29,7 +33,7 @@ resource "kubernetes_manifest" "this" {
       # https://fluxcd.io/flux/components/source/gitrepositories/#ignore-spec
       ignore = join("\n", concat(
         ["/* # Exclude all"],
-        [for dir in each.value.deploy_dirs : "!/${dir}/**"],
+        [for p in each.value.includes : "!/${p}"],
         )
       )
     }
