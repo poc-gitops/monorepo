@@ -9,13 +9,39 @@ locals {
   }
 }
 
+resource "tls_private_key" "this" {
+  for_each = local.repos
+
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
+}
+
+resource "kubernetes_secret" "this" {
+  for_each = local.repos
+
+  metadata {
+    name      = "github-ssh-keypair-${each.key}"
+    namespace = var.fluxcd_namespace
+  }
+
+  type = "Opaque"
+
+  data = {
+    "identity.pub" = tls_private_key.this[each.key].public_key_openssh
+    "identity"     = tls_private_key.this[each.key].private_key_pem
+    "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
+  }
+
+  depends_on = [ helm_release.this ]
+}
+
 resource "github_repository_deploy_key" "this" {
   for_each = local.repos
 
   title      = var.github_deploy_key_name
   repository = each.value.name
-  key        = tls_private_key.this.public_key_openssh
-  read_only  = true
+  key        = tls_private_key.this[each.key].public_key_openssh
+  read_only  = false
 }
 
 resource "kubernetes_manifest" "repository" {
@@ -40,7 +66,7 @@ resource "kubernetes_manifest" "repository" {
         branch = each.value.branch
       }
       secretRef = {
-        name = kubernetes_secret.this.metadata[0].name
+        name = kubernetes_secret.this[each.key].metadata[0].name
       }
     }
   }
