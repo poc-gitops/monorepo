@@ -28,14 +28,6 @@ resource "kubernetes_manifest" "this" {
       secretRef = {
         name = kubernetes_secret.this.metadata[0].name
       }
-
-      # Exclude all directories and files except the ones specified in deploy_dirs
-      # https://fluxcd.io/flux/components/source/gitrepositories/#ignore-spec
-      ignore = join("\n", concat(
-        ["/* # Exclude all"],
-        [for p in each.value.includes : "!/${p}"],
-        )
-      )
     }
   }
 }

@@ -8,7 +8,8 @@ spec:
   interval: 2m0s
   releaseName: service-ui
   targetNamespace: service-ui
-  createNamespace: true
+  install:
+    createNamespace: true
   chart:
     spec:
       chart: nginx
