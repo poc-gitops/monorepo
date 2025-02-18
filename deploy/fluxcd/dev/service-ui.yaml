@@ -20,6 +20,8 @@ spec:
       version: "19.0.0"
   values:
     replicaCount: 2
+    service:
+      type: ClusterIP
     resources:
       requests:
         cpu: 100m
