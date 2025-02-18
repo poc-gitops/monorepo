@@ -1,0 +1,36 @@
+cloudflare:
+  secretRef:
+    name: cloudflare
+    accountIDKey: account_id
+    tunnelNameKey: tunnel_name
+    apiTokenKey: api_token
+
+ingressClass:
+  name: cloudflare-tunnel
+  controllerValue: strrl.dev/cloudflare-tunnel-ingress-controller
+  isDefaultClass: true
+
+replicaCount: 1
+
+image:
+  repository: cr.strrl.dev/strrl/cloudflare-tunnel-ingress-controller
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+cloudflared:
+  image:
+    repository: cloudflare/cloudflared
+    pullPolicy: IfNotPresent
+    tag: latest
+  replicaCount: 1
+  protocol: auto
+
+cloudflaredServiceMonitor:
+  create: false
