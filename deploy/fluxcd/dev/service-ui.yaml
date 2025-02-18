@@ -27,3 +27,8 @@ spec:
       limits:
         cpu: 500m
         memory: 512Mi
+    ingress:
+      enabled: true
+      ingressClassName: cloudflare-tunnel
+      hostname: demo.mhcp001.uk
+
