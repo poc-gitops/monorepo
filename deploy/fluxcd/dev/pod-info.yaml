@@ -40,4 +40,4 @@ spec:
       target:
         kind: Deployment
   values:
-    replicaCount: 2
+    replicaCount: 1
