@@ -3,9 +3,12 @@ module "fluxcd" {
 
   repositories = [
     {
-      repo     = "poc-gitops/monorepo"
-      includes = ["deploy", "deploy/fluxcd", "deploy/fluxcd/dev", "deploy/fluxcd/dev/**"]
-      branch   = "main"
+      org  = "poc-gitops"
+      name = "monorepo"
+      branch = "main"
+      deploy_dirs = {
+        "dev" = "deploy/fluxcd/dev"
+      }
     },
   ]
   github_deploy_key_name = "fluxcd-dev"

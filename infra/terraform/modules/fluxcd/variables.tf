@@ -15,7 +15,9 @@ variable "fluxcd_namespace" {
 
 variable "repositories" {
   type = list(object({
-    repo          = string
+    org           = string
+    name          = string
+    deploy_dirs   = map(string)
     pull_interval = optional(string, "1m")
     branch        = optional(string, "master")
   }))
